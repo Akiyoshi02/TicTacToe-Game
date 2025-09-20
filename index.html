@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TicTacToe</title>
+        <link rel="icon" type="image/png" href="src/tic-tac-toe.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="start-screen" class="start-screen">
+    <div id="loading-screen" class="loading-screen">
+        <img src="src/tic-tac-toe.png" alt="TicTacToe Logo" class="logo">
+        <p>Developed by Akiyoshi Yapa</p>
+    </div>
+
+    <div id="start-screen" class="start-screen hidden">
         <div class="start-content">
+            <img src="src/tic-tac-toe.png" alt="TicTacToe Logo" class="logo">
             <h1>TicTacToe</h1>
             <form id="player-form">
                 <div class="player-input">

@@ -13,10 +13,11 @@ const player2NameInput = document.getElementById('player2-name');
 const player1SymbolSelect = document.getElementById('player1-symbol');
 const player2SymbolSelect = document.getElementById('player2-symbol');
 const container = document.querySelector('.container');
+const loadingScreen = document.getElementById('loading-screen');
 
 let currentPlayer = 'X';
 let gameBoard = Array(9).fill(null);
-let gameActive = false; // Start inactive until names are set
+let gameActive = false; // Start inactive until loading and names are set
 let xScore = 0;
 let oScore = 0;
 let turnCount = 0;
@@ -66,6 +67,14 @@ function startGame(event) {
     container.classList.remove('hidden');
     gameActive = true;
 }
+
+// Simulate loading delay and transition
+window.onload = () => {
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+    }, 2000); // 2-second loading screen
+};
 
 function handleCellClick(event) {
     const cell = event.target;
