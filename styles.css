@@ -178,7 +178,6 @@ h1 {
     transform: scale(0.95);
 }
 
-/* Popup overlay */
 .popup {
     position: fixed;
     top: 0; left: 0;
@@ -238,7 +237,6 @@ h1 {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* Responsive design */
 @media (max-width: 600px) {
     #board {
         width: 80vw;
