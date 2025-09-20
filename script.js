@@ -16,7 +16,7 @@ const container = document.querySelector('.container');
 
 let currentPlayer = 'X';
 let gameBoard = Array(9).fill(null);
-let gameActive = false; // Start inactive until names are set
+let gameActive = false;
 let xScore = 0;
 let oScore = 0;
 let turnCount = 0;
@@ -36,15 +36,14 @@ const winningCombinations = [
     [2, 4, 6]
 ];
 
-// Audio setup
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 function playSound() {
     const oscillator = audioContext.createOscillator();
     oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
     oscillator.connect(audioContext.destination);
     oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.2); // 200ms sound
+    oscillator.stop(audioContext.currentTime + 0.2);
 }
 
 function syncSymbols() {
