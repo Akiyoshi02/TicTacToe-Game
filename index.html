@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="start-screen" class="start-screen">
+        <div class="start-content">
+            <h1>TicTacToe</h1>
+            <form id="player-form">
+                <div class="player-input">
+                    <label for="player1-name">Player 1 Name:</label>
+                    <input type="text" id="player1-name" required>
+                    <select id="player1-symbol">
+                        <option value="X">X</option>
+                        <option value="O">O</option>
+                    </select>
+                </div>
+                <div class="player-input">
+                    <label for="player2-name">Player 2 Name:</label>
+                    <input type="text" id="player2-name" required>
+                    <select id="player2-symbol" disabled>
+                        <option value="O">O</option>
+                        <option value="X">X</option>
+                    </select>
+                </div>
+                <button type="submit" id="start-game">Start Game</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container hidden">
+        <h1>TicTacToe</h1>
+        <div id="score">Score - : 0 | : 0</div>
+        <div id="turn-counter">Turns: 0</div>
+        <div id="board">
+            <div class="cell" data-cell-index="0"></div>
+            <div class="cell" data-cell-index="1"></div>
+            <div class="cell" data-cell-index="2"></div>
+            <div class="cell" data-cell-index="3"></div>
+            <div class="cell" data-cell-index="4"></div>
+            <div class="cell" data-cell-index="5"></div>
+            <div class="cell" data-cell-index="6"></div>
+            <div class="cell" data-cell-index="7"></div>
+            <div class="cell" data-cell-index="8"></div>
+        </div>
+        <div id="status">Player X's turn</div>
+        <button id="restart">Restart Game</button>
+    </div>
+
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <h2 id="popup-message"></h2>
+            <button id="popup-restart">Play Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

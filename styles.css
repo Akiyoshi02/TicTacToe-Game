@@ -1,0 +1,268 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    color: #333;
+}
+
+.start-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.start-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+}
+
+.start-content h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.player-input {
+    margin: 15px 0;
+}
+
+.player-input label {
+    display: block;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.player-input input, .player-input select {
+    padding: 8px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 200px;
+    margin-bottom: 10px;
+    border: 1px solid #2c3e50;
+    border-radius: 5px;
+}
+
+#start-game {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#start-game:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+}
+
+#start-game:active {
+    transform: scale(0.95);
+}
+
+.container {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#score, #turn-counter {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+}
+
+.cell {
+    background-color: #ecf0f1;
+    border: 3px solid #2c3e50;
+    border-radius: 10px;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #2c3e50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    aspect-ratio: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.cell.win {
+    background-color: #2ecc71;
+    animation: winAnimation 0.5s ease-in-out;
+}
+
+@keyframes winAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.cell:hover {
+    background-color: #dfe6e9;
+}
+
+.cell:active {
+    background-color: #d5d8db;
+}
+
+#status {
+    font-size: 1.5em;
+    font-weight: 500;
+    margin: 15px 0;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s;
+}
+
+#restart {
+    padding: 12px 24px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#restart:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+#restart:active {
+    transform: scale(0.95);
+}
+
+/* Popup overlay */
+.popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.hidden {
+    display: none;
+}
+
+.popup-content {
+    background: #fff;
+    padding: 25px 35px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
+    max-width: 180px;
+    width: 90%;
+}
+
+.popup-content h2 {
+    margin: 0 0 20px;
+    font-size: 1.5em;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+#popup-restart {
+    padding: 10px 25px;
+    font-size: 1em;
+    font-weight: bold;
+    background: #e74c3c;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    transition: background 0.3s, transform 0.2s;
+}
+
+#popup-restart:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+
+#popup-restart:active {
+    transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    #board {
+        width: 80vw;
+        height: 80vw;
+    }
+
+    .cell {
+        font-size: 2em;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    #score, #turn-counter, #status {
+        font-size: 1.2em;
+    }
+
+    #restart {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+
+    .player-input input, .player-input select {
+        max-width: 150px;
+    }
+}
