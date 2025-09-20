@@ -38,6 +38,7 @@ const winningCombinations = [
 ];
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
 function playSound() {
     const oscillator = audioContext.createOscillator();
     oscillator.type = 'sine';
@@ -67,12 +68,11 @@ function startGame(event) {
     gameActive = true;
 }
 
-// Simulate loading delay and transition
 window.onload = () => {
     setTimeout(() => {
         loadingScreen.classList.add('hidden');
         startScreen.classList.remove('hidden');
-    }, 2000); // 2-second loading screen
+    }, 2000);
 };
 
 function handleCellClick(event) {
