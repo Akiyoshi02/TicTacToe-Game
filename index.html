@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TicTacToe</title>
-        <link rel="icon" type="image/png" href="src/tic-tac-toe.png">
+    <link rel="icon" type="image/png" href="src/tic-tac-toe.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="loading-screen" class="loading-screen">
         <img src="src/tic-tac-toe.png" alt="TicTacToe Logo" class="logo">
+        <p>Loading... Please Wait</p>
     </div>
 
-    <div id="start-screen" class="start-screen hidden">
+    <div id="start-screen" class="start-screen">
         <div class="start-content">
             <img src="src/tic-tac-toe.png" alt="TicTacToe Logo" class="logo">
             <h1>TicTacToe</h1>
@@ -33,28 +34,32 @@
                         <option value="X">X</option>
                     </select>
                 </div>
+                <div class="player-input">
+                    <label for="level-select">Game Level:</label>
+                    <select id="level-select">
+                        <option value="easy">Easy (3×3, 3 in a row)</option>
+                        <option value="normal">Normal (4×4, 4 in a row)</option>
+                        <option value="hard">Hard (5×5, 4 in a row)</option>
+                        <option value="expert">Expert (5×5, 5 in a row)</option>
+                        <option value="master">Master (6×6, 5 in a row)</option>
+                    </select>
+                </div>
                 <button type="submit" id="start-game">Let's Play</button>
             </form>
         </div>
     </div>
 
-    <div class="container hidden">
-        <h1>TicTacToe</h1>
-        <div id="score">Score - : 0 | : 0</div>
-        <div id="turn-counter">Turns: 0</div>
-        <div id="board">
-            <div class="cell" data-cell-index="0"></div>
-            <div class="cell" data-cell-index="1"></div>
-            <div class="cell" data-cell-index="2"></div>
-            <div class="cell" data-cell-index="3"></div>
-            <div class="cell" data-cell-index="4"></div>
-            <div class="cell" data-cell-index="5"></div>
-            <div class="cell" data-cell-index="6"></div>
-            <div class="cell" data-cell-index="7"></div>
-            <div class="cell" data-cell-index="8"></div>
+    <div class="game-wrapper hidden">
+        <div id="player1-score" class="score-panel"></div>
+        <div class="container hidden">
+            <h1>TicTacToe</h1>
+            <div id="turn-counter">Turns: 0</div>
+            <div id="board"></div>
+            <div id="status">Player X's turn</div>
+            <button id="restart">Restart Game</button>
+            <button id="new-game">New Game</button>
         </div>
-        <div id="status">Player X's turn</div>
-        <button id="restart">Restart Game</button>
+        <div id="player2-score" class="score-panel"></div>
     </div>
 
     <div id="popup" class="popup hidden">

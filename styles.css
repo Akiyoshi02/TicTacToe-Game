@@ -32,7 +32,7 @@ body {
 
 .loading-screen p {
     color: black;
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
 }
 
@@ -131,12 +131,6 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.container .logo {
-    max-width: 150px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
 h1 {
     font-size: 2.5em;
     margin-bottom: 20px;
@@ -153,10 +147,7 @@ h1 {
 
 #board {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    width: 300px;
-    height: 300px;
     margin: 20px auto;
 }
 
@@ -206,7 +197,7 @@ h1 {
     transition: opacity 0.3s;
 }
 
-#restart {
+#restart, #new-game {
     padding: 12px 24px;
     font-size: 1.1em;
     font-weight: bold;
@@ -216,14 +207,15 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
+    margin: 5px;
 }
 
-#restart:hover {
+#restart:hover, #new-game:hover {
     background-color: #c0392b;
     transform: scale(1.05);
 }
 
-#restart:active {
+#restart:active, #new-game:active {
     transform: scale(0.95);
 }
 
@@ -304,7 +296,7 @@ h1 {
         font-size: 1.2em;
     }
 
-    #restart {
+    #restart, #new-game {
         padding: 10px 20px;
         font-size: 1em;
     }
@@ -314,10 +306,6 @@ h1 {
     }
 
     .logo {
-        max-width: 120px;
-    }
-
-    .container .logo {
         max-width: 120px;
     }
 

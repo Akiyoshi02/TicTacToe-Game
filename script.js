@@ -1,6 +1,6 @@
-const cells = document.querySelectorAll('.cell');
 const status = document.getElementById('status');
 const restartButton = document.getElementById('restart');
+const newGameButton = document.getElementById('new-game');
 const scoreDisplay = document.getElementById('score');
 const turnCounter = document.getElementById('turn-counter');
 const popup = document.getElementById('popup');
@@ -12,11 +12,12 @@ const player1NameInput = document.getElementById('player1-name');
 const player2NameInput = document.getElementById('player2-name');
 const player1SymbolSelect = document.getElementById('player1-symbol');
 const player2SymbolSelect = document.getElementById('player2-symbol');
+const levelSelect = document.getElementById('level-select');
 const container = document.querySelector('.container');
 const loadingScreen = document.getElementById('loading-screen');
 
 let currentPlayer = 'X';
-let gameBoard = Array(9).fill(null);
+let gameBoard = [];
 let gameActive = false;
 let xScore = 0;
 let oScore = 0;
@@ -25,17 +26,16 @@ let player1Name = '';
 let player2Name = '';
 let player1Symbol = 'X';
 let player2Symbol = 'O';
+let boardSize = 3;
+let winCondition = 3;
 
-const winningCombinations = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-];
+const levelConfig = {
+    easy: { boardSize: 3, winCondition: 3 },
+    normal: { boardSize: 4, winCondition: 4 },
+    hard: { boardSize: 5, winCondition: 4 },
+    expert: { boardSize: 5, winCondition: 5 },
+    master: { boardSize: 6, winCondition: 5 }
+};
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -54,18 +54,72 @@ function syncSymbols() {
     player2SymbolSelect.value = player2Symbol;
 }
 
+function initializeBoard() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    board.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
+    board.style.width = `${boardSize * 100}px`;
+    board.style.height = `${boardSize * 100}px`;
+    gameBoard = Array(boardSize * boardSize).fill(null);
+    for (let i = 0; i < boardSize * boardSize; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.setAttribute('data-cell-index', i);
+        cell.addEventListener('click', handleCellClick);
+        board.appendChild(cell);
+    }
+}
+
 function startGame(event) {
     event.preventDefault();
     player1Name = player1NameInput.value.trim() || 'Player 1';
     player2Name = player2NameInput.value.trim() || 'Player 2';
     player1Symbol = player1SymbolSelect.value;
     player2Symbol = player2SymbolSelect.value;
+    const level = levelSelect.value;
 
-    updateScore();
-    status.textContent = `${player1Name}'s turn (${player1Symbol})`;
+    if (player1Name.toLowerCase() === player2Name.toLowerCase()) {
+        alert('Please use different names for each player.');
+        return;
+    }
+
+    boardSize = levelConfig[level].boardSize;
+    winCondition = levelConfig[level].winCondition;
+    initializeBoard();
+
+    currentPlayer = Math.random() < 0.5 ? player1Symbol : player2Symbol;
+    scoreDisplay.textContent = `Score - ${player1Name}: ${xScore} | ${player2Name}: ${oScore}`;
+    status.textContent = `${currentPlayer === player1Symbol ? player1Name : player2Name}'s turn (${currentPlayer})`;
     startScreen.classList.add('hidden');
     container.classList.remove('hidden');
     gameActive = true;
+    updateTurnCounter();
+}
+
+function newGame() {
+    gameBoard = Array(boardSize * boardSize).fill(null);
+    xScore = 0;
+    oScore = 0;
+    turnCount = 0;
+    player1Name = '';
+    player2Name = '';
+    player1Symbol = 'X';
+    player2Symbol = 'O';
+    player1NameInput.value = '';
+    player2NameInput.value = '';
+    player1SymbolSelect.value = 'X';
+    player2SymbolSelect.value = 'O';
+    levelSelect.value = 'easy';
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('win');
+    });
+    container.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+    gameActive = false;
+    updateScore();
+    updateTurnCounter();
 }
 
 window.onload = () => {
@@ -77,7 +131,7 @@ window.onload = () => {
 
 function handleCellClick(event) {
     const cell = event.target;
-    const index = cell.getAttribute('data-cell-index');
+    const index = parseInt(cell.getAttribute('data-cell-index'));
 
     if (gameBoard[index] || !gameActive) return;
 
@@ -109,17 +163,91 @@ function handleCellClick(event) {
 }
 
 function checkWin() {
-    return winningCombinations.some(combination => {
-        return combination.every(index => gameBoard[index] === currentPlayer);
-    });
+    for (let i = 0; i < boardSize; i++) {
+        for (let j = 0; j <= boardSize - winCondition; j++) {
+            const row = Array.from({ length: winCondition }, (_, k) => gameBoard[i * boardSize + j + k]);
+            if (row.every(cell => cell === currentPlayer)) {
+                return true;
+            }
+        }
+    }
+
+    for (let j = 0; j < boardSize; j++) {
+        for (let i = 0; i <= boardSize - winCondition; i++) {
+            const col = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j]);
+            if (col.every(cell => cell === currentPlayer)) {
+                return true;
+            }
+        }
+    }
+
+    for (let i = 0; i <= boardSize - winCondition; i++) {
+        for (let j = 0; j <= boardSize - winCondition; j++) {
+            const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j + k]);
+            if (diag.every(cell => cell === currentPlayer)) {
+                return true;
+            }
+        }
+    }
+
+    for (let i = 0; i <= boardSize - winCondition; i++) {
+        for (let j = winCondition - 1; j < boardSize; j++) {
+            const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j - k]);
+            if (diag.every(cell => cell === currentPlayer)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function highlightWinningCells() {
-    winningCombinations.forEach(combination => {
-        if (combination.every(index => gameBoard[index] === currentPlayer)) {
-            combination.forEach(index => cells[index].classList.add('win'));
+    const cells = document.querySelectorAll('.cell');
+
+    for (let i = 0; i < boardSize; i++) {
+        for (let j = 0; j <= boardSize - winCondition; j++) {
+            const row = Array.from({ length: winCondition }, (_, k) => gameBoard[i * boardSize + j + k]);
+            if (row.every(cell => cell === currentPlayer)) {
+                for (let k = 0; k < winCondition; k++) {
+                    cells[i * boardSize + j + k].classList.add('win');
+                }
+            }
         }
-    });
+    }
+
+    for (let j = 0; j < boardSize; j++) {
+        for (let i = 0; i <= boardSize - winCondition; i++) {
+            const col = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j]);
+            if (col.every(cell => cell === currentPlayer)) {
+                for (let k = 0; k < winCondition; k++) {
+                    cells[(i + k) * boardSize + j].classList.add('win');
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i <= boardSize - winCondition; i++) {
+        for (let j = 0; j <= boardSize - winCondition; j++) {
+            const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j + k]);
+            if (diag.every(cell => cell === currentPlayer)) {
+                for (let k = 0; k < winCondition; k++) {
+                    cells[(i + k) * boardSize + j + k].classList.add('win');
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i <= boardSize - winCondition; i++) {
+        for (let j = winCondition - 1; j < boardSize; j++) {
+            const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j - k]);
+            if (diag.every(cell => cell === currentPlayer)) {
+                for (let k = 0; k < winCondition; k++) {
+                    cells[(i + k) * boardSize + j - k].classList.add('win');
+                }
+            }
+        }
+    }
 }
 
 function updateScore() {
@@ -131,19 +259,21 @@ function updateTurnCounter() {
 }
 
 function restartGame() {
-    gameBoard = Array(9).fill(null);
+    gameBoard = Array(boardSize * boardSize).fill(null);
+    const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
         cell.textContent = '';
         cell.classList.remove('win');
     });
-    currentPlayer = player1Symbol;
+    currentPlayer = Math.random() < 0.5 ? player1Symbol : player2Symbol;
     status.style.opacity = '0';
     setTimeout(() => {
-        status.textContent = `${player1Name}'s turn (${player1Symbol})`;
+        status.textContent = `${currentPlayer === player1Symbol ? player1Name : player2Name}'s turn (${currentPlayer})`;
         status.style.opacity = '1';
     }, 300);
     gameActive = true;
     turnCount = 0;
+    updateScore();
     updateTurnCounter();
 }
 
@@ -159,9 +289,8 @@ function closePopup() {
 
 player1SymbolSelect.addEventListener('change', syncSymbols);
 playerForm.addEventListener('submit', startGame);
-cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 restartButton.addEventListener('click', restartGame);
+newGameButton.addEventListener('click', newGame);
 popupRestart.addEventListener('click', closePopup);
 
-updateScore();
 updateTurnCounter();
