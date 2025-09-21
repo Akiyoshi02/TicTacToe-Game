@@ -16,6 +16,9 @@ const levelSelect = document.getElementById('level-select');
 const container = document.querySelector('.container');
 const loadingScreen = document.getElementById('loading-screen');
 
+const winSound = new Audio('src/sounds/win_sound.mp3');
+const drawSound = new Audio('src/sounds/draw_sound.mp3');
+
 let currentPlayer = 'X';
 let gameBoard = [];
 let gameActive = false;
@@ -36,17 +39,6 @@ const levelConfig = {
     expert: { boardSize: 5, winCondition: 5 },
     master: { boardSize: 6, winCondition: 5 }
 };
-
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSound() {
-    const oscillator = audioContext.createOscillator();
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-    oscillator.connect(audioContext.destination);
-    oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.2);
-}
 
 function syncSymbols() {
     player1Symbol = player1SymbolSelect.value;
@@ -141,14 +133,14 @@ function handleCellClick(event) {
 
     if (checkWin()) {
         highlightWinningCells();
-        playSound();
+        winSound.play();
         showPopup(`${currentPlayer === player1Symbol ? player1Name : player2Name} wins!`);
         if (currentPlayer === player1Symbol) xScore++;
         else oScore++;
         updateScore();
         gameActive = false;
     } else if (gameBoard.every(cell => cell)) {
-        playSound();
+        drawSound.play();
         showPopup("It's a draw!");
         gameActive = false;
     } else {
@@ -277,8 +269,21 @@ function restartGame() {
 }
 
 function showPopup(message) {
+    
+    document.getElementById('board').classList.add('board-draw');
+    setTimeout(() => document.getElementById('board').classList.remove('board-draw'), 1000);
+
     popupMessage.textContent = message;
     popup.classList.remove('hidden');
+    if (message.includes('wins')) {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#FF0000', '#0000FF', '#800080', '#FFA500', '#FFC1CC', '#FFFF00', '#FFD700'],
+            zIndex: 140
+        });
+    }
 }
 
 function closePopup() {
