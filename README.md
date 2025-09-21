@@ -27,9 +27,6 @@ Not just the classic 3×3 game — this version supports **multiple board sizes,
 
 ## 🚀 Getting Started  
 
-### Play Online  
-👉 [Click here to play](https://tictactoe-aki.netlify.app/) (no server required!)  
-
 ### Run Locally  
 1. Clone the repository  
    ```bash
