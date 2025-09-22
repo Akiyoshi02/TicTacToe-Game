@@ -17,21 +17,37 @@
         <div class="start-content">
             <img src="src/images/tic-tac-toe.png" alt="TicTacToe Logo" class="logo">
             <h1>TicTacToe</h1>
+
             <form id="player-form">
                 <div class="player-input">
-                    <label for="player1-name">Player 1 Name:</label>
+                    <label for="game-mode">Game Mode:</label>
+                    <select id="game-mode">
+                        <option value="1v1">1v1 (Player vs Player)</option>
+                        <option value="1vAI">1vAI (Player vs AI)</option>
+                    </select>
+                </div>
+                <div id="player1-section" class="player-input">
+                    <label for="player1-name">Player Name:</label>
                     <input type="text" id="player1-name" required>
                     <select id="player1-symbol">
                         <option value="X">X</option>
                         <option value="O">O</option>
                     </select>
                 </div>
-                <div class="player-input">
+                <div id="player2-section" class="player-input">
                     <label for="player2-name">Player 2 Name:</label>
                     <input type="text" id="player2-name" required>
                     <select id="player2-symbol" disabled>
                         <option value="O">O</option>
                         <option value="X">X</option>
+                    </select>
+                </div>
+                <div id="ai-difficulty-section" class="player-input hidden">
+                    <label for="ai-difficulty">AI Difficulty:</label>
+                    <select id="ai-difficulty">
+                        <option value="easy">Easy (Random moves)</option>
+                        <option value="medium">Medium (Blocks wins, some strategy)</option>
+                        <option value="hard">Hard (Unbeatable with minimax)</option>
                     </select>
                 </div>
                 <div class="player-input">
@@ -46,6 +62,7 @@
                 </div>
                 <button type="submit" id="start-game">Let's Play</button>
             </form>
+
         </div>
     </div>
 
