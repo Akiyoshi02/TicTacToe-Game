@@ -2,6 +2,7 @@ const status = document.getElementById('status');
 const restartButton = document.getElementById('restart');
 const newGameButton = document.getElementById('new-game');
 const scoreDisplay = document.getElementById('score');
+const scoreValues = document.querySelector('.score-values');
 const turnCounter = document.getElementById('turn-counter');
 const popup = document.getElementById('popup');
 const popupMessage = document.getElementById('popup-message');
@@ -72,8 +73,7 @@ function initializeBoard() {
     const board = document.getElementById('board');
     board.innerHTML = '';
     board.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
-    board.style.width = `${boardSize * 100}px`;
-    board.style.height = `${boardSize * 100}px`;
+    board.style.setProperty('--board-size', boardSize);
     gameBoard = Array(boardSize * boardSize).fill(null);
     for (let i = 0; i < boardSize * boardSize; i++) {
         const cell = document.createElement('div');
@@ -110,7 +110,7 @@ function startGame(event) {
 
     initializeBoard();
     currentPlayer = Math.random() < 0.5 ? player1Symbol : player2Symbol;
-    scoreDisplay.textContent = `Score - ${player1Name} (${player1Symbol}): ${player1Score} | ${player2Name} (${player2Symbol}): ${player2Score}`;
+    scoreValues.textContent = `${player1Name} (${player1Symbol}): ${player1Score} | ${player2Name} (${player2Symbol}): ${player2Score}`;
     status.textContent = `${currentPlayer === player1Symbol ? player1Name : player2Name}'s turn (${currentPlayer})`;
     startScreen.classList.add('hidden');
     container.classList.remove('hidden');
@@ -309,7 +309,7 @@ function highlightWinningCells() {
         for (let j = 0; j <= boardSize - winCondition; j++) {
             const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j + k]);
             if (diag.every(cell => cell === currentPlayer)) {
-                for (let k = 0; k < winCondition; k++) {
+                for (let k = 0; k < winCondition; k()) {
                     cells[(i + k) * boardSize + j + k].classList.add('win');
                 }
             }
@@ -329,7 +329,7 @@ function highlightWinningCells() {
 }
 
 function updateScore() {
-    scoreDisplay.textContent = `Score - ${player1Name} (${player1Symbol}): ${player1Score} | ${player2Name} (${player2Symbol}): ${player2Score}`;
+    scoreValues.textContent = `${player1Name} (${player1Symbol}): ${player1Score} | ${player2Name} (${player2Symbol}): ${player2Score}`;
 }
 
 function updateTurnCounter() {
