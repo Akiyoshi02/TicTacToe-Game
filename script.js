@@ -175,8 +175,13 @@ function handleCellClick(event) {
 
     if (checkWin()) {
         highlightWinningCells();
-        winSound.play();
-        showPopup(`${currentPlayer === player1Symbol ? player1Name : player2Name} wins!`);
+        if (isAIPlaying && currentPlayer === player2Symbol) {
+            drawSound.play();
+            showPopup('You lose!');
+        } else {
+            winSound.play();
+            showPopup(`${currentPlayer === player1Symbol ? player1Name : player2Name} wins!`);
+        }
         if (currentPlayer === player1Symbol) player1Score++;
         else player2Score++;
         updateScore();
@@ -218,8 +223,8 @@ function makeAIMove() {
             turnCount++;
             if (checkWin()) {
                 highlightWinningCells();
-                winSound.play();
-                showPopup(`${player2Name} wins!`);
+                drawSound.play();
+                showPopup('You lose!');
                 player2Score++;
                 updateScore();
                 gameActive = false;
@@ -398,10 +403,10 @@ function getMinimaxMove() {
             for (let i = 0; i < board.length; i++) {
                 if (board[i] === null) {
                     board[i] = player2Symbol;
-                    const eval = minimax(board, depth + 1, false, alpha, beta);
+                    const score = minimax(board, depth + 1, false, alpha, beta);
                     board[i] = null;
-                    maxEval = Math.max(maxEval, eval);
-                    alpha = Math.max(alpha, eval);
+                    maxEval = Math.max(maxEval, score);
+                    alpha = Math.max(alpha, score);
                     if (beta <= alpha) break;
                 }
             }
@@ -411,10 +416,10 @@ function getMinimaxMove() {
             for (let i = 0; i < board.length; i++) {
                 if (board[i] === null) {
                     board[i] = player1Symbol;
-                    const eval = minimax(board, depth + 1, true, alpha, beta);
+                    const score = minimax(board, depth + 1, true, alpha, beta);
                     board[i] = null;
-                    minEval = Math.min(minEval, eval);
-                    beta = Math.min(beta, eval);
+                    minEval = Math.min(minEval, score);
+                    beta = Math.min(beta, score);
                     if (beta <= alpha) break;
                 }
             }
@@ -451,7 +456,7 @@ function showPopup(message) {
     setTimeout(() => document.getElementById('board').classList.remove('board-draw'), 1000);
     popupMessage.textContent = message;
     popup.classList.remove('hidden');
-    if (message.includes('wins')) {
+    if (message.includes('wins') && !(isAIPlaying && message === 'You lose!')) {
         confetti({
             particleCount: 100,
             spread: 70,

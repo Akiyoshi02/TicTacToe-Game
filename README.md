@@ -1,6 +1,6 @@
 # 🎮 TicTacToe – Advanced Web Game  
 
-A modern and feature-rich **TicTacToe** built with **HTML, CSS, and JavaScript**.  
+A modern and feature-rich **TicTacToe** built with **HTML, CSS, and JavaScript** uisng AI.  
 Not just the classic 3×3 game — this version supports **multiple board sizes, difficulty levels, player customization, and fun animations**.  
 
 [![Play on Netlify](https://img.shields.io/badge/Play%20Now-Netlify-brightgreen?style=for-the-badge&logo=netlify)](https://tictactoe-aki.netlify.app/)  
@@ -40,4 +40,4 @@ Not just the classic 3×3 game — this version supports **multiple board sizes,
 
 ## 🎯 Future Improvements
 
-- Add AI mode for single-player
+- Add a user account to store the scores.
