@@ -62,4 +62,5 @@ Not just the classic 3×3 game — this version supports **multiple board sizes,
 ### Run Locally  
 1. Clone the repository  
    ```bash
-   git clone https://github.com/Akiyoshi02/TicTacToe-Game.git
+   git clone https://github.com/Akiyoshi02/TicTacToe_Game.git
+   cd TicTacToe_Game
