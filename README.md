@@ -3,7 +3,7 @@
 A modern and feature-rich **TicTacToe** built with **HTML, CSS, and JavaScript** uisng AI.  
 Not just the classic 3×3 game — this version supports **multiple board sizes, difficulty levels, player customization, and fun animations**.  
 
-[![Play on Netlify](https://img.shields.io/badge/Play%20Now-Netlify-brightgreen?style=for-the-badge&logo=netlify)](https://tictactoe-aki.netlify.app/)  
+[![Play on GitHub Pages](https://img.shields.io/badge/Play%20Now-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://akiyoshi02.github.io/TicTacToe_Game/)
 
 ---
 
