@@ -1,8 +1,7 @@
 let boardSize, winCondition, player1Symbol, player2Symbol;
 
-function checkWinForSymbol(board, symbol, currentPlayerSymbol) {
-    const win = checkWin(board, symbol);
-    return win;
+function checkWinForSymbol(board, symbol) {
+    return checkWin(board, symbol);
 }
 
 function checkWin(board, currentPlayerSymbol) {
@@ -54,7 +53,7 @@ function evaluateBoard(board) {
         const countOwn = line.filter(cell => cell === symbol).length;
         const countOpp = line.filter(cell => cell === oppSymbol).length;
         if (countOpp > 0) return 0;
-        return Math.pow(10, countOwn);
+        return Math.pow(100, countOwn);
     };
 
     for (let i = 0; i < boardSize; i++) {
@@ -86,12 +85,22 @@ function evaluateBoard(board) {
         }
     }
 
+    const centerStart = Math.floor((boardSize - 1) / 2) - 1;
+    const centerEnd = centerStart + (boardSize % 2 === 0 ? 3 : 2);
+    for (let row = centerStart; row < centerEnd; row++) {
+        for (let col = centerStart; col < centerEnd; col++) {
+            const idx = row * boardSize + col;
+            if (board[idx] === player2Symbol) aiScore += 50;
+            if (board[idx] === player1Symbol) playerScore += 50;
+        }
+    }
+
     return aiScore - playerScore;
 }
 
 function minimax(board, depth, isMaximizing, alpha, beta, maxDepth) {
-    if (checkWinForSymbol(board, player2Symbol, player2Symbol)) return 1000 - depth;
-    if (checkWinForSymbol(board, player1Symbol, player1Symbol)) return depth - 1000;
+    if (checkWinForSymbol(board, player2Symbol)) return 100000 - depth;
+    if (checkWinForSymbol(board, player1Symbol)) return depth - 100000;
     if (board.every(cell => cell)) return 0;
 
     if (depth >= maxDepth) {
@@ -105,16 +114,17 @@ function minimax(board, depth, isMaximizing, alpha, beta, maxDepth) {
         }
     }
 
-    const center = Math.floor(board.length / 2);
-    moves.sort((a, b) => {
-        const distA = Math.abs(a - center);
-        const distB = Math.abs(b - center);
-        return distA - distB;
+    const moveScores = moves.map(i => {
+        board[i] = isMaximizing ? player2Symbol : player1Symbol;
+        const score = evaluateBoard(board);
+        board[i] = null;
+        return { i, score };
     });
+    moveScores.sort((a, b) => isMaximizing ? b.score - a.score : a.score - b.score);
 
     if (isMaximizing) {
         let maxEval = -Infinity;
-        for (const i of moves) {
+        for (const { i } of moveScores) {
             board[i] = player2Symbol;
             const evalScore = minimax(board, depth + 1, false, alpha, beta, maxDepth);
             board[i] = null;
@@ -125,7 +135,7 @@ function minimax(board, depth, isMaximizing, alpha, beta, maxDepth) {
         return maxEval;
     } else {
         let minEval = Infinity;
-        for (const i of moves) {
+        for (const { i } of moveScores) {
             board[i] = player1Symbol;
             const evalScore = minimax(board, depth + 1, true, alpha, beta, maxDepth);
             board[i] = null;
@@ -143,6 +153,28 @@ function getMinimaxMove(board, config) {
     player1Symbol = config.player1Symbol;
     player2Symbol = config.player2Symbol;
     const maxDepth = config.maxDepth;
+
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+            board[i] = player2Symbol;
+            if (checkWinForSymbol(board, player2Symbol)) {
+                board[i] = null;
+                return i;
+            }
+            board[i] = null;
+        }
+    }
+
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+            board[i] = player1Symbol;
+            if (checkWinForSymbol(board, player1Symbol)) {
+                board[i] = null;
+                return i;
+            }
+            board[i] = null;
+        }
+    }
 
     let bestScore = -Infinity;
     let bestMove;

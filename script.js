@@ -223,7 +223,7 @@ function makeAIMove() {
         moveIndex = getMediumMove();
         executeMove(moveIndex);
     } else {
-        const maxDepth = boardSize <= 3 ? 9 : boardSize <= 4 ? 7 : boardSize <= 5 ? 5 : 4;
+        const maxDepth = boardSize <= 3 ? 9 : boardSize <= 4 ? 7 : boardSize <= 5 ? 4 : 3;
         aiWorker.postMessage({
             board: gameBoard,
             config: { boardSize, winCondition, player1Symbol, player2Symbol, maxDepth }
