@@ -39,6 +39,7 @@ let winCondition = 3;
 let gameMode = '1v1';
 let aiDifficulty = 'easy';
 let isAIPlaying = false;
+let aiWorker;
 
 const levelConfig = {
     easy: { boardSize: 3, winCondition: 3 },
@@ -106,6 +107,11 @@ function startGame(event) {
         aiDifficulty = document.getElementById('ai-difficulty').value;
         isAIPlaying = true;
         player2SymbolSelect.value = player2Symbol;
+        aiWorker = new Worker('ai-worker.js'); // Initialize worker
+        aiWorker.onmessage = (event) => {
+            const moveIndex = event.data;
+            executeMove(moveIndex);
+        };
     }
 
     initializeBoard();
@@ -118,11 +124,12 @@ function startGame(event) {
     updateTurnCounter();
 
     if (isAIPlaying && currentPlayer === player2Symbol) {
-        setTimeout(makeAIMove, 500);
+        makeAIMove();
     }
 }
 
 function newGame() {
+    if (aiWorker) aiWorker.terminate(); // Cleanup worker
     gameBoard = Array(boardSize * boardSize).fill(null);
     player1Score = 0;
     player2Score = 0;
@@ -207,38 +214,46 @@ function handleCellClick(event) {
 function makeAIMove() {
     if (!gameActive || !isAIPlaying || currentPlayer !== player2Symbol) return;
     status.textContent = 'AI is thinking...';
-    setTimeout(() => {
-        let moveIndex;
-        if (aiDifficulty === 'easy') {
-            moveIndex = getRandomMove();
-        } else if (aiDifficulty === 'medium') {
-            moveIndex = getMediumMove();
+
+    let moveIndex;
+    if (aiDifficulty === 'easy') {
+        moveIndex = getRandomMove();
+        executeMove(moveIndex);
+    } else if (aiDifficulty === 'medium') {
+        moveIndex = getMediumMove();
+        executeMove(moveIndex);
+    } else {
+        const maxDepth = boardSize <= 3 ? 9 : boardSize <= 4 ? 7 : boardSize <= 5 ? 5 : 4;
+        aiWorker.postMessage({
+            board: gameBoard,
+            config: { boardSize, winCondition, player1Symbol, player2Symbol, maxDepth }
+        });
+    }
+}
+
+function executeMove(moveIndex) {
+    if (moveIndex !== undefined) {
+        gameBoard[moveIndex] = currentPlayer;
+        const cell = document.querySelector(`[data-cell-index="${moveIndex}"]`);
+        cell.textContent = currentPlayer;
+        turnCount++;
+        if (checkWin()) {
+            highlightWinningCells();
+            drawSound.play();
+            showPopup('You lose!');
+            player2Score++;
+            updateScore();
+            gameActive = false;
+        } else if (gameBoard.every(cell => cell)) {
+            drawSound.play();
+            showPopup("It's a draw!");
+            gameActive = false;
         } else {
-            moveIndex = getMinimaxMove();
+            currentPlayer = player1Symbol;
+            status.textContent = `${player1Name}'s turn (${currentPlayer})`;
         }
-        if (moveIndex !== undefined) {
-            gameBoard[moveIndex] = currentPlayer;
-            const cell = document.querySelector(`[data-cell-index="${moveIndex}"]`);
-            cell.textContent = currentPlayer;
-            turnCount++;
-            if (checkWin()) {
-                highlightWinningCells();
-                drawSound.play();
-                showPopup('You lose!');
-                player2Score++;
-                updateScore();
-                gameActive = false;
-            } else if (gameBoard.every(cell => cell)) {
-                drawSound.play();
-                showPopup("It's a draw!");
-                gameActive = false;
-            } else {
-                currentPlayer = player1Symbol;
-                status.textContent = `${player1Name}'s turn (${currentPlayer})`;
-            }
-            updateTurnCounter();
-        }
-    }, 500);
+        updateTurnCounter();
+    }
 }
 
 function checkWin(board = gameBoard) {
@@ -309,7 +324,7 @@ function highlightWinningCells() {
         for (let j = 0; j <= boardSize - winCondition; j++) {
             const diag = Array.from({ length: winCondition }, (_, k) => gameBoard[(i + k) * boardSize + j + k]);
             if (diag.every(cell => cell === currentPlayer)) {
-                for (let k = 0; k < winCondition; k()) {
+                for (let k = 0; k < winCondition; k++) {
                     cells[(i + k) * boardSize + j + k].classList.add('win');
                 }
             }
@@ -389,66 +404,6 @@ function getMediumMove() {
     }
     currentPlayer = originalPlayer;
     return getRandomMove();
-}
-
-function getMinimaxMove() {
-    function minimax(board, depth, isMaximizing, alpha, beta) {
-        if (depth > 5) return 0;
-        if (checkWinForSymbol(board, player2Symbol)) return 10 - depth;
-        if (checkWinForSymbol(board, player1Symbol)) return depth - 10;
-        if (board.every(cell => cell)) return 0;
-
-        if (isMaximizing) {
-            let maxEval = -Infinity;
-            for (let i = 0; i < board.length; i++) {
-                if (board[i] === null) {
-                    board[i] = player2Symbol;
-                    const score = minimax(board, depth + 1, false, alpha, beta);
-                    board[i] = null;
-                    maxEval = Math.max(maxEval, score);
-                    alpha = Math.max(alpha, score);
-                    if (beta <= alpha) break;
-                }
-            }
-            return maxEval;
-        } else {
-            let minEval = Infinity;
-            for (let i = 0; i < board.length; i++) {
-                if (board[i] === null) {
-                    board[i] = player1Symbol;
-                    const score = minimax(board, depth + 1, true, alpha, beta);
-                    board[i] = null;
-                    minEval = Math.min(minEval, score);
-                    beta = Math.min(beta, score);
-                    if (beta <= alpha) break;
-                }
-            }
-            return minEval;
-        }
-    }
-
-    function checkWinForSymbol(tempBoard, symbol) {
-        const originalPlayer = currentPlayer;
-        currentPlayer = symbol;
-        const win = checkWin(tempBoard);
-        currentPlayer = originalPlayer;
-        return win;
-    }
-
-    let bestScore = -Infinity;
-    let bestMove;
-    for (let i = 0; i < gameBoard.length; i++) {
-        if (gameBoard[i] === null) {
-            gameBoard[i] = player2Symbol;
-            const score = minimax(gameBoard, 0, false, -Infinity, Infinity);
-            gameBoard[i] = null;
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = i;
-            }
-        }
-    }
-    return bestMove;
 }
 
 function showPopup(message) {
